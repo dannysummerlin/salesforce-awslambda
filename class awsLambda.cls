@@ -16,7 +16,7 @@ global class awsLambdaSingleResult {
             request.setBody(JSONBody);
 			Http http = new Http();
 // https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_classes_restful_http_testing_httpcalloutmock.htm
-			if(Test.isTest()) { HTTPResponse result = mockWebcall; }
+			if(Test.isTest()) { HTTPResponse result = MockHTTPResponse.mockSuccess(); }
 			else { HTTPResponse result = http.send(request); }
 			if(result.getStatusCode() != 200) {
 				output.text1 = 'Error';
