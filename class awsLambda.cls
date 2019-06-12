@@ -15,7 +15,9 @@ global class awsLambdaSingleResult {
 			if(!String.isBlank(awsKey)) { request.setHeader('x-api-key', awsKey); }
             request.setBody(JSONBody);
 			Http http = new Http();
-			HTTPResponse result = http.send(request);
+// https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_classes_restful_http_testing_httpcalloutmock.htm
+			if(Test.isTest()) { HTTPResponse result = mockWebcall; }
+			else { HTTPResponse result = http.send(request); }
 			if(result.getStatusCode() != 200) {
 				output.text1 = 'Error';
 				output.text2 = result.getBody();
