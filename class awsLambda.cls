@@ -1,9 +1,10 @@
 global class awsLambdaSingleResult {
 	@InvocableMethod(label='AWS Lambda Single Result' description='Call an AWS Lambda that returns one set of results.')
-	global static List<LambdaResponse> callLambdaSingle(List<String> params) {
+	global static List<LambdaResponse> callLambdaSingle(List<String> paramString) {
+		List<String> params = paramString[0].split('\n');
 		String lambdaUrl = params.remove(0);
 		String awsKey = params.remove(0);
-		String JSONBody = params.remove(0);
+		String JSONBody = String.join(params, '\n');
 		List<LambdaResponse> outputWrapper = new List<LambdaResponse>();
 		LambdaResponse output = new LambdaResponse();
 		Boolean validJSONBody = false;
