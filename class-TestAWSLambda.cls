@@ -8,7 +8,20 @@ private class testAWSLambdaResults {
 		params.add(testURL);
 		params.add(apiKey);
 		params.add('{"test":"Sent from Salesforce"}');
-		List<LambdaResponse> result = awsLambdaSingleResult.callLambdaSingle(params);
+        List<String> paramArray = new List<String>();
+        paramArray.add(String.join(params, '\n'));
+		List<LambdaResponse> result = awsLambdaSingleResult.callLambdaSingle(paramArray);
+		System.debug(result);
+	}
+	private static testMethod void testMultiCall() {
+		Test.setMock(HttpCalloutMock.class, new MockMultiHttpResponse());
+		List<String> params = new List<String>();
+		params.add(testURL);
+		params.add(apiKey);
+		params.add('{"test":"Sent from Salesforce"}');
+        List<String> paramArray = new List<String>();
+        paramArray.add(String.join(params, '\n'));
+		List<List<LambdaResponse>> result = awsLambdaMultipleResults.callLambdaMultiple(paramArray);
 // but can't use
 		System.debug(result);
 	}
