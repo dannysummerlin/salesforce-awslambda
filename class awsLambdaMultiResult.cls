@@ -10,10 +10,10 @@ global class awsLambdaMultipleResults {
 		String errorOutput = 'none';
 		Boolean validJSONBody = false;
 		try {
-			List<Object> testJSON = (List<Object>) JSON.deserializeUntyped(JSONBody);
+			Map<String, Object> testJSON = (Map<String, Object>) JSON.deserializeUntyped(JSONBody);
 			validJSONBody = true;
 		} catch(Exception e) {
-			errorOutput = 'Error: you must provide well formatted JSON';
+			errorOutput = 'Error: you must provide well formatted JSON - ' + JSONBody;
 		}
 		if(validJSONBody && !String.isBlank(lambdaUrl) && Pattern.matches('https://.*', lambdaUrl)) {
 			HttpRequest request = new HttpRequest();
