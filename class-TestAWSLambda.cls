@@ -8,8 +8,8 @@ private class testAWSLambdaResults {
 		params.add(testURL);
 		params.add(apiKey);
 		params.add('{"test":"Sent from Salesforce"}');
-        List<String> paramArray = new List<String>();
-        paramArray.add(String.join(params, '\n'));
+		List<String> paramArray = new List<String>();
+		paramArray.add(String.join(params, '\n'));
 		List<LambdaResponse> result = awsLambdaSingleResult.callLambdaSingle(paramArray);
 		System.debug(result);
 	}
@@ -19,11 +19,14 @@ private class testAWSLambdaResults {
 		params.add(testURL);
 		params.add(apiKey);
 		params.add('{"test":"Sent from Salesforce"}');
-        List<String> paramArray = new List<String>();
-        paramArray.add(String.join(params, '\n'));
-		List<List<LambdaResponse>> result = awsLambdaMultipleResults.callLambdaMultiple(paramArray);
-// but can't use
-		System.debug(result);
+		List<String> paramArray = new List<String>();
+		paramArray.add(String.join(params, '\n'));
+		List<List<String>> results = awsLambdaMultipleResults.callLambdaMultiple(paramArray);
+		for(List<String> r : results) {
+			List<LambdaResponse> lr = awsLambdaMultipleResultsProcessor.processLambdaResult(r);
+			System.debug(lr);
+		}
+		System.debug(results);
 	}
 	// private static testMethod void testCount() { testReturn('count(description)', callJSONQueryAction('select count(description) from data', 'javascript'), '4'); }
 	// private static void testReturn(String testName, List<List<JSONQueryResult>> result, String testValue) { testReturn(testName, result[0], testValue); }
