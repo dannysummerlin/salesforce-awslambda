@@ -6,11 +6,14 @@ global class awsLambdaMultipleResults {
 		String awsKey = params.remove(0);
 		String JSONBody = String.join(params, '\n');
 		List<List<String>> finalOutputWrapper = new List<List<String>>();
-		List<String> errorOutputWrapperInner = new List<String>();
+		List<String> outputWrapper = new List<String>();
 		String errorOutput = 'none';
 		Boolean validJSONBody = false;
 		try {
-			Map<String, Object> testJSON = (Map<String, Object>) JSON.deserializeUntyped(JSONBody);
+            if(JSONBody.substring(0,1) == '{')
+				Map<String, Object> testJSON = (Map<String, Object>) JSON.deserializeUntyped(JSONBody);
+            else
+                List<Object> testJSON = (List<Object>) JSON.deserializeUntyped(JSONBody);
 			validJSONBody = true;
 		} catch(Exception e) {
 			errorOutput = 'Error: you must provide well formatted JSON - ' + JSONBody;
@@ -39,10 +42,8 @@ global class awsLambdaMultipleResults {
 					}
 					if(validJSONResponse) {
 						for (Object r : deserialized) {
-							List<String> outputWrapper = new List<String>();
 							String output = JSON.serialize(r);
-                            outputWrapper.add(output);
-							finalOutputWrapper.add(outputWrapper);
+							outputWrapper.add(output);
 						}
 					}
 				}
@@ -51,9 +52,9 @@ global class awsLambdaMultipleResults {
 			errorOutput = 'Error: you must provide a valid Lambda URL';
 		}
 		if(errorOutput != 'none') {
-			errorOutputWrapperInner.add(errorOutput);
-			finalOutputWrapper.add(errorOutputWrapperInner);
+			outputWrapper.add(errorOutput);
 		}
+		finalOutputWrapper.add(outputWrapper);
 		return finalOutputWrapper;
 	}
 }
