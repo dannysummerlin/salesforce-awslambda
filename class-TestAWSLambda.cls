@@ -1,7 +1,7 @@
-@isTest //(SeeAllData=true)
+@isTest
 private class testAWSLambdaResults {
-	static String testURL = 'https://api.summerlin.co/tests/Salesforce-awsLambdaTest';
-	static String apiKey = 'NmzbGGo2wP3YqFW8AHs6J9wcSbSGeJjq7jKds1JN';
+	static String testURL = 'https://api.summerlin.co/tests/lambda-example';
+	static String apiKey = 'DEMOKEY';
 	private static testMethod void testCall() {
 		Test.setMock(HttpCalloutMock.class, new MockHttpResponse());
 		List<String> params = new List<String>();
@@ -21,7 +21,9 @@ private class testAWSLambdaResults {
 		params.add('{"test":"Sent from Salesforce"}');
 		List<String> paramArray = new List<String>();
 		paramArray.add(String.join(params, '\n'));
-		List<List<String>> results = awsLambdaMultipleResults.callLambdaMultiple(paramArray);
+		List<List<String>> paramArrayWrapper = new List<List<String>>();
+		paramArrayWrapper.add(paramArray);
+		List<List<String>> results = awsLambdaMultipleResults.callLambdaMultiple(paramArrayWrapper);
 		for(List<String> r : results) {
 			List<LambdaResponse> lr = awsLambdaMultipleResultsProcessor.processLambdaResult(r);
 			System.debug(lr);
