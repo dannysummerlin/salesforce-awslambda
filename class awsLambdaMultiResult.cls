@@ -5,15 +5,15 @@ global class awsLambdaMultipleResults {
 		String lambdaUrl = params.remove(0);
 		String awsKey = params.remove(0);
 		String JSONBody = String.join(params, '\n');
-		List<List<String>> finalOutputWrapper = new List<List<String>>();
 		List<String> outputWrapper = new List<String>();
 		String errorOutput = 'none';
 		Boolean validJSONBody = false;
+		List<List<String>> finalOutputWrapper = new List<List<String>>();
 		try {
-            if(JSONBody.substring(0,1) == '{')
+			if(JSONBody.substring(0,1) == '{')
 				Map<String, Object> testJSON = (Map<String, Object>) JSON.deserializeUntyped(JSONBody);
-            else
-                List<Object> testJSON = (List<Object>) JSON.deserializeUntyped(JSONBody);
+			else
+				List<Object> testJSONArray = (List<Object>) JSON.deserializeUntyped(JSONBody);
 			validJSONBody = true;
 		} catch(Exception e) {
 			errorOutput = 'Error: you must provide well formatted JSON - ' + JSONBody;

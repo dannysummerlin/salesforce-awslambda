@@ -1,5 +1,5 @@
-global class awsLambdaMultipleResultsProcessor {
-	@InvocableMethod(label='Process AWS Lambda Multiple Results output' description='Processes the output of the JSON returned by the Multiple Result Apex')
+global class awsLambdaResultProcessor {
+	@InvocableMethod(label='Process AWS Lambda Result output' description='Processes the output of the JSON returned by the Multiple Result Apex')
 	global static List<LambdaResponse> processLambdaResult(List<String> jsonBodyArray) {
 		String body = jsonBodyArray[0];
 		List<LambdaResponse> outputWrapper = new List<LambdaResponse>();
