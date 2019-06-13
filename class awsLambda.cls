@@ -6,8 +6,15 @@ global class awsLambdaSingleResult {
 		String JSONBody = params.remove(0);
 		List<LambdaResponse> outputWrapper = new List<LambdaResponse>();
 		LambdaResponse output = new LambdaResponse();
+		Boolean validJSONBody = false;
 		// check valid URL need to use Regex instead
-		if(!String.isBlank(lambdaUrl)) {
+		try {
+			Map<String, Object> testJSON = (Map<String, Object>) JSON.deserializeUntyped(JSONBody);
+			validJSONBody = true;
+		} catch(Exception e) {
+			output.text1 = 'Error: you must provide well formatted JSON';
+		}
+		if(validJSONBody && !String.isBlank(lambdaUrl) && Pattern.matches('https://.*', lambdaUrl)) {
 			HttpRequest request = new HttpRequest();
 			request.setEndpoint(lambdaUrl);
 			request.setMethod('POST');
@@ -22,34 +29,44 @@ global class awsLambdaSingleResult {
 			} else {
 				String body = result.getBody();
 				if(!String.isBlank(body)) {
-					Map<String, Object> deserialized = (Map<String, Object>) JSON.deserializeUntyped(body);
-					for (Integer i = 1; i < 11; i++) {
-						String value = (String) deserialized.get('text' + String.valueOf(i));
-						output.putText(i, value);
+					Map<String, Object> deserialized = new Map<String, Object>();
+					Boolean validJSONResponse = false;
+					try {
+						deserialized = (Map<String, Object>) JSON.deserializeUntyped(body);
+						validJSONResponse = true;
+					} catch(Exception e) {
+						output.text1 = 'Error: received invalid JSON, check documentation for response requirements';
+						output.text2 = body;
 					}
-					for (Integer i = 1; i < 6; i++) {
-						Decimal value = (Decimal) deserialized.get('number' + String.valueOf(i));
-						if(value != null)
-							output.putNumber(i, value);
-					}
-					for (Integer i = 1; i < 6; i++) {
-						String value = (String) deserialized.get('date' + String.valueOf(i));
-						if(value != null)
-							output.putDate(i, makeDateFromISO(value));
-					}
-					for (Integer i = 1; i < 6; i++) {
-						String value = (String) deserialized.get('datetime' + String.valueOf(i));
-						if(value != null)
-							output.putDatetime(i, Datetime.valueOf(value)); //https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_methods_system_datetime.htm#apex_methods_system_datetime
-					}
-					for (Integer i = 1; i < 6; i++) {
-						Boolean value = (Boolean) deserialized.get('bool' + String.valueOf(i));
-						if(value != null)
-							output.putBool(i, value);
+					if(validJSONResponse) {
+						for (Integer i = 1; i < 11; i++) {
+							String value = (String) deserialized.get('text' + String.valueOf(i));
+							output.putText(i, value);
+						}
+						for (Integer i = 1; i < 6; i++) {
+							Decimal value = (Decimal) deserialized.get('number' + String.valueOf(i));
+							if(value != null)
+								output.putNumber(i, value);
+						}
+						for (Integer i = 1; i < 6; i++) {
+							String value = (String) deserialized.get('date' + String.valueOf(i));
+							if(value != null)
+								output.putDate(i, makeDateFromISO(value));
+						}
+						for (Integer i = 1; i < 6; i++) {
+							String value = (String) deserialized.get('datetime' + String.valueOf(i));
+							if(value != null)
+								output.putDatetime(i, Datetime.valueOf(value.replace('T',' ')));
+						}
+						for (Integer i = 1; i < 6; i++) {
+							Boolean value = (Boolean) deserialized.get('bool' + String.valueOf(i));
+							if(value != null)
+								output.putBool(i, value);
+						}
 					}
 				}
 			}
-		} else {
+		} else if(validJSONBody) {
 			output.text1 = 'Error: you must provide a valid Lambda URL';
 		}
 		outputWrapper.add(output);
