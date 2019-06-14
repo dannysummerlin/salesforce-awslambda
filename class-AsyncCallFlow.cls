@@ -26,5 +26,12 @@ global class AsyncCallFlow {
 			request.setEndpoint(result.getHeader('Location'));
 			result = new Http().send(request);
 		}
+		Messaging.SingleEmailMessage message = new Messaging.SingleEmailMessage();
+		message.toAddresses = new String[] { 'salesforce.help@jstart.org' };
+		message.optOutPolicy = 'FILTER';
+		message.subject = 'Async Request';
+		message.plainTextBody = result.getBody();
+		Messaging.SingleEmailMessage[] messages =   new List<Messaging.SingleEmailMessage> {message};
+		Messaging.SendEmailResult[] results = Messaging.sendEmail(messages);
 	}
 }
