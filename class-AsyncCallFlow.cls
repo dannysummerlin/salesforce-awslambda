@@ -10,8 +10,10 @@ global class AsyncCallFlow {
 	@future(callout = true)
 	global static void asyncFlow(String flowName, String jsonVariables) {
 		Map<String, Object> inputs = (Map<String, Object>) JSON.deserializeUntyped(jsonVariables);
-		Flow.Interview flowCall = Flow.Interview.createInterview(flowName, inputs);
-		flowCall.start();
+		try {
+			Flow.Interview flowCall = Flow.Interview.createInterview(flowName, inputs);
+			flowCall.start();
+		} catch(Exception e) {}
 	}
-    global static void asyncHttp(String url) {} //legacy, can't remove
+	global static void asyncHttp(String url) {} //legacy, can't remove
 }

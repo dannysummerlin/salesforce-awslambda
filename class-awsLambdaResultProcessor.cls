@@ -20,9 +20,19 @@ global class awsLambdaResultProcessor {
 					output.putText(i, value);
 				}
 				for (Integer i = 1; i < 6; i++) {
-					Decimal value = (Decimal) deserialized.get('number' + String.valueOf(i));
-					if(value != null)
-						output.putNumber(i, value);
+					try {
+						String rawValue = (String) deserialized.get('number' + String.valueOf(i));
+						if(rawValue != null) {
+							Decimal value = Decimal.valueOf(rawValue);
+							output.putNumber(i, value);
+						}
+					} catch(Exception f) {
+						try {
+							Decimal value = (Decimal) deserialized.get('number' + String.valueOf(i));
+							if(value != null)
+								output.putNumber(i, value);
+						} catch(Exception e) {}
+					}
 				}
 				for (Integer i = 1; i < 6; i++) {
 					String value = (String) deserialized.get('date' + String.valueOf(i));

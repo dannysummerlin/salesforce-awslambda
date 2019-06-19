@@ -10,7 +10,7 @@ global class awsLambdaMultipleResults {
 		Boolean validJSONBody = false;
 		List<List<String>> finalOutputWrapper = new List<List<String>>();
 		try {
-			if(JSONBody.substring(0,1) == '{')
+            if(JSONBody.substring(0,1) == '{')
 				Map<String, Object> testJSON = (Map<String, Object>) JSON.deserializeUntyped(JSONBody);
 			else
 				List<Object> testJSONArray = (List<Object>) JSON.deserializeUntyped(JSONBody);
